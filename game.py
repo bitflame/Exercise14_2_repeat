@@ -3,6 +3,7 @@ import sys
 from ship import Ship
 from button import Button
 from settings import Settings
+from bullet import Bullet
 
 class Game: 
     def __init__(self):
@@ -17,11 +18,13 @@ class Game:
         self.play_button = Button(self, "Play")
         self.rectShape = pygame.Rect(self.display_rectangle.right -120  ,2,5,100)
         self.direction = 1
+        self.bullets = pygame.sprite.Group()
         
     def run_game(self):
         while self.running:
             self._check_events()
             self.ship.update() 
+            self.bullets.update()
             self._updateScreen()
             pygame.draw.rect(self.screen,'black',self.rectShape)
             self.rectShape.y += 2 * self.direction
@@ -50,6 +53,13 @@ class Game:
             self.ship.moving_up = True
         elif event.key == pygame.K_q:
             sys.exit()   
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
+    
+    def _fire_bullet(self):
+        """Create a new bullet and add it to the bullets group."""
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
     def _check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_DOWN:
@@ -59,6 +69,8 @@ class Game:
                            
     def _updateScreen(self):
         self.screen.fill(self.settings.bg_color)
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
         self.ship.belitme()  
         pygame.display.flip()
         
