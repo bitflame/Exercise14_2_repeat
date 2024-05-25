@@ -1,7 +1,9 @@
 import pygame
+import sys
 from ship import Ship
 from button import Button
 from settings import Settings
+
 class Game: 
     def __init__(self):
         pygame.init()
@@ -36,15 +38,24 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False  
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    self.ship.moving_down = True
-                if event.key == pygame.K_UP:
-                    self.ship.moving_up = True
+                self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN:
-                    self.ship.moving_down = False
-                if event.key == pygame.K_UP:
-                    self.ship.moving_up = False
+                self._check_keyup_events(event)
+                
+    def _check_keydown_events(self, event):
+        """Respond to keypresses."""
+        if event.key == pygame.K_DOWN:
+            self.ship.moving_down = True
+        if event.key == pygame.K_UP:
+            self.ship.moving_up = True
+        elif event.key == pygame.K_q:
+            sys.exit()   
+    def _check_keyup_events(self, event):
+        """Respond to key releases."""
+        if event.key == pygame.K_DOWN:
+            self.ship.moving_down = False
+        if event.key == pygame.K_UP:
+            self.ship.moving_up = False
                            
     def _updateScreen(self):
         self.screen.fill(self.settings.bg_color)
