@@ -24,18 +24,25 @@ class Game:
         while self.running:
             self._check_events()
             self.ship.update() 
-            self.bullets.update()
+            self._update_bullets()
             self._updateScreen()
             pygame.draw.rect(self.screen,'black',self.rectShape)
-            self.rectShape.y += 2 * self.direction
-            if self.rectShape.bottom >= self.display_rectangle.bottom:
-                self.direction = -1
-            if self.rectShape.top <= 0: 
-                self.direction = 1
+            self._update_rect()
             pygame.display.flip()
             self.clock.tick(60)
             
-        
+    def _update_bullets(self):
+        self.bullets.update()
+        for bullet in self.bullets.copy():
+            if bullet.rect.left >= self.display_rectangle.right:
+                self.bullets.remove(bullet)
+           
+    def _update_rect(self):
+        self.rectShape.y += 2 * self.direction
+        if self.rectShape.bottom >= self.display_rectangle.bottom:
+            self.direction = -1
+        if self.rectShape.top <= 0: 
+            self.direction = 1    
     def _check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -58,8 +65,9 @@ class Game:
     
     def _fire_bullet(self):
         """Create a new bullet and add it to the bullets group."""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
     def _check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_DOWN:
