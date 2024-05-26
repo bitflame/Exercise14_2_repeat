@@ -14,21 +14,23 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Shoot the target")
         self.ship = Ship(self)
-        self.running = True
+        self.running = False
         self.play_button = Button(self, "Play")
         self.rectShape = pygame.Rect(self.display_rectangle.right -120  ,2,5,100)
         self.direction = 1
         self.bullets = pygame.sprite.Group()
         
     def run_game(self):
-        while self.running:
+        
+        while True:
             self._check_events()
-            self.ship.update() 
-            self._update_bullets()
+            if self.running:
+                self.ship.update() 
+                self._update_bullets()
+                pygame.display.flip()
             self._updateScreen()
             pygame.draw.rect(self.screen,'black',self.rectShape)
             self._update_rect()
-            pygame.display.flip()
             self.clock.tick(60)
             
     def _update_bullets(self):
@@ -54,7 +56,14 @@ class Game:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
-                
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
+    
+    def _check_play_button(self, mouse_pos):
+        if self.play_button.rect.collidepoint(mouse_pos):
+            self.running = True
+                        
     def _check_keydown_events(self, event):
         """Respond to keypresses."""
         if event.key == pygame.K_DOWN:
@@ -83,6 +92,8 @@ class Game:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.belitme()  
+        if not self.running:
+            self.play_button.draw_button()
         pygame.display.flip()
         
 if __name__ == '__main__':
