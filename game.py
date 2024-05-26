@@ -32,10 +32,13 @@ class Game:
             self.clock.tick(60)
             
     def _update_bullets(self):
-        self.bullets.update()
+        self.bullets.update()  
         for bullet in self.bullets.copy():
             if bullet.rect.left >= self.display_rectangle.right:
                 self.bullets.remove(bullet)
+            elif self.rectShape.colliderect(bullet.rect):
+                self.bullets.remove(bullet)
+                self.running = False
            
     def _update_rect(self):
         self.rectShape.y += 2 * self.direction
