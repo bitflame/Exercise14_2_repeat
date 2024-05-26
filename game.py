@@ -40,7 +40,9 @@ class Game:
                 self.bullets.remove(bullet)
             elif self.rectShape.colliderect(bullet.rect):
                 self.bullets.remove(bullet)
-                self.running = False
+                self.rectShape = pygame.Rect(self.display_rectangle.right -120  ,2,5,100)
+                # self.running = False
+                self.settings.increase_speed()
            
     def _update_rect(self):
         self.rectShape.y += 2 * self.direction
@@ -48,10 +50,11 @@ class Game:
             self.direction = -1
         if self.rectShape.top <= 0: 
             self.direction = 1    
+            
     def _check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False  
+                sys.exit()  
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -62,6 +65,7 @@ class Game:
     
     def _check_play_button(self, mouse_pos):
         if self.play_button.rect.collidepoint(mouse_pos):
+            self.settings.initialize_dynamic_settings()
             self.running = True
                         
     def _check_keydown_events(self, event):
@@ -80,6 +84,7 @@ class Game:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            
     def _check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_DOWN:
